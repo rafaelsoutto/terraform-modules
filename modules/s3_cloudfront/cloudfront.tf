@@ -22,12 +22,20 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
   }
 
+ custom_error_response {
+    error_code            = 403
+    response_code         = 200
+    response_page_path    = "/index.html"
+    error_caching_min_ttl = 5
+  }
+
   custom_error_response {
     error_code            = 404
-    response_page_path    = "/index.html"
     response_code         = 200
-    error_caching_min_ttl = 300
+    response_page_path    = "/index.html"
+    error_caching_min_ttl = 5
   }
+
 
   viewer_certificate {
     cloudfront_default_certificate = var.acm_certificate_arn == "" ? true : false
