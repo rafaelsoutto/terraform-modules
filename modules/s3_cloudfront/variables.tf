@@ -11,6 +11,12 @@ variable "enable_waf" {
   default     = false
 }
 
+variable "web_acl_id" {
+  description = "WAF Web ACL ID."
+  type        = string
+  default     = ""
+}
+
 variable "cnames" {
   description = "List of CNAMEs for CloudFront distribution."
   type        = list(string)

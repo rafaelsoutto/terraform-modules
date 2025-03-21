@@ -26,8 +26,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   }
 }
 
-resource "aws_s3_bucket_cors" "website" {
-  bucket = aws_s3_bucket.website.id
+resource "aws_s3_bucket_cors_configuration" "this" {
+  bucket = aws_s3_bucket.this.id
 
   cors_rule {
     allowed_headers = ["*"]

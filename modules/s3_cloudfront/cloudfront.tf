@@ -1,15 +1,13 @@
-
 resource "aws_cloudfront_distribution" "cdn" {
   origin {
     domain_name = aws_s3_bucket.website.bucket_regional_domain_name
     origin_id   = aws_s3_bucket.website.id
   }
 
-  enabled               = true
-  default_root_object   = "index.html"
-  aliases              = var.cnames
-  price_class = var.price_class
-
+  enabled             = true
+  default_root_object = "index.html"
+  aliases             = var.cnames
+  price_class         = var.price_class
 
   default_cache_behavior {
     viewer_protocol_policy = "redirect-to-https"
@@ -31,21 +29,15 @@ resource "aws_cloudfront_distribution" "cdn" {
     error_caching_min_ttl = 300
   }
 
-  dynamic "viewer_certificate" {
-    for_each = var.acm_certificate_arn != "" ? [1] : []
-    content {
-      acm_certificate_arn      = var.acm_certificate_arn
-      ssl_support_method       = "sni-only"
-      minimum_protocol_version = "TLSv1.2_2021"
-    }
+  viewer_certificate {
+    cloudfront_default_certificate = var.acm_certificate_arn == "" ? true : false
+    acm_certificate_arn            = var.acm_certificate_arn != "" ? var.acm_certificate_arn : null
+    ssl_support_method             = var.acm_certificate_arn != "" ? "sni-only" : null
+    minimum_protocol_version       = var.acm_certificate_arn != "" ? "TLSv1.2_2021" : null
   }
 
-  dynamic "web_acl_id" {
-    for_each = var.enable_waf ? [1] : []
-    content {
-      web_acl_id = "your-waf-acl-id"
-    }
-  }
+  # Corrected web_acl_id configuration
+  web_acl_id = var.enable_waf ? var.web_acl_id : null
 
   restrictions {
     geo_restriction {
@@ -55,5 +47,4 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   tags = var.tags
-
 }
