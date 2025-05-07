@@ -73,3 +73,15 @@ variable "subnet_ids" {
   description = "List of subnet IDs where the RDS instance should be deployed"
   type        = list(string)
 }
+
+variable "performance_insights_enabled" {
+  description = "Enable performance insights for the RDS instance"
+  type        = bool
+  default     = false
+}
+
+variable "monitoring_interval" {
+  description = "The interval (in seconds) for enhanced monitoring"
+  type        = number
+  default     = 60
+}

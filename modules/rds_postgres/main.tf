@@ -55,6 +55,8 @@ resource "aws_db_instance" "postgres" {
   engine                  = "postgres"
   engine_version          = var.engine_version
   instance_class          = var.instance_class
+  performance_insights_enabled = var.performance_insights_enabled
+  monitoring_interval     = var.monitoring_interval
   db_name                 = var.db_name
   username                = var.db_username
   password                = aws_secretsmanager_secret_version.db_password_version.secret_string
