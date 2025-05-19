@@ -12,6 +12,7 @@ resource "aws_lambda_function" "this" {
   runtime       = var.runtime
   timeout       = var.timeout
   memory_size   = var.memory_size
+  layers        = var.lambda_layers
 
 
   dynamic "vpc_config" {

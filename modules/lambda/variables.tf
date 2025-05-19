@@ -10,6 +10,12 @@ variable "ephemeral_storage_size" {
   default     = 512
 }
 
+variable "lambda_layers" {
+  description = "List of Lambda layers to attach"
+  type        = list(string)
+  default     = []
+}
+
 variable "function_name" {
   description = "Name of the Lambda function"
   type        = string
