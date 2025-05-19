@@ -20,29 +20,17 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-resource "aws_iam_policy" "lambda_additional_permissions" {
-  count = length(var.additional_policy_statements) > 0 ? 1 : 0
-
-  name        = "${var.function_name}-additional-permissions"
-  description = "Additional permissions for ${var.function_name} Lambda"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = var.additional_policy_statements
-  })
-}
-
 resource "aws_iam_role_policy_attachment" "lambda_additional_permissions" {
-  count = length(var.additional_policy_statements) > 0 ? 1 : 0
+  count = length(var.allowed_actions) > 0 ? 1 : 0
 
   role       = aws_iam_role.lambda_exec.name
-  policy_arn = aws_iam_policy.lambda_additional_permissions[0].arn
+  policy_arn = aws_iam_policy.lambda_permissions[0].arn
 }
 
 resource "aws_iam_policy" "lambda_permissions" {
-  count = var.is_sqs_triggered ? 1 : 0
+  count = length(var.allowed_actions) > 0 ? 1 : 0
 
-  name        = "${var.function_name}-sqs-permissions"
+  name        = "${var.function_name}-permissions"
   description = "Permissions for ${var.function_name} to interact with AWS Resources"
 
   policy = jsonencode({
