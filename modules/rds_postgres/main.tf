@@ -34,6 +34,9 @@ resource "random_password" "password" {
   length           = 16
   special          = true
   override_special = "_-"
+  keepers = {
+    db_name = var.db_name
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "db_password_version" {
