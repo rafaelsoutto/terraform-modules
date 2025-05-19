@@ -39,33 +39,28 @@ resource "aws_iam_role_policy_attachment" "lambda_additional_permissions" {
   policy_arn = aws_iam_policy.lambda_additional_permissions[0].arn
 }
 
-resource "aws_iam_policy" "lambda_sqs_permissions" {
+resource "aws_iam_policy" "lambda_permissions" {
   count = var.is_sqs_triggered ? 1 : 0
 
   name        = "${var.function_name}-sqs-permissions"
-  description = "Permissions for ${var.function_name} to interact with SQS"
+  description = "Permissions for ${var.function_name} to interact with AWS Resources"
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
         Effect = "Allow"
-        Action = [
-          "sqs:ReceiveMessage",
-          "sqs:DeleteMessage",
-          "sqs:GetQueueAttributes",
-          "secretsmanager:GetSecretValue"
-        ]
-        Resource = var.sqs_queue_arn
+        Action = var.allowed_actions
+        Resource = var.allowed_resources
       }
     ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_sqs_permissions" {
+resource "aws_iam_role_policy_attachment" "lambda_permissions" {
   count = var.is_sqs_triggered ? 1 : 0
 
   role       = aws_iam_role.lambda_exec.name
-  policy_arn = aws_iam_policy.lambda_sqs_permissions[0].arn
+  policy_arn = aws_iam_policy.lambda_permissions[0].arn
 }
 

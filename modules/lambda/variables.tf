@@ -10,6 +10,18 @@ variable "ephemeral_storage_size" {
   default     = 512
 }
 
+variable "allowed_resources" {
+  description = "List of allowed resources for the Lambda function"
+  type        = list(string)
+  default     = []
+}
+
+variable "allowed_actions" {
+  description = "List of allowed actions for the Lambda function"
+  type        = list(string)
+  default     = []
+}
+
 variable "lambda_layers" {
   description = "List of Lambda layers to attach"
   type        = list(string)
