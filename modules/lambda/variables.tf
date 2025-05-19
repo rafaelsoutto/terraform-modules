@@ -4,6 +4,12 @@ variable "force_redeploy" {
   default     = "initial"
 }
 
+variable "ephemeral_storage_size" {
+  description = "Ephemeral storage size in MB"
+  type        = number
+  default     = 512
+}
+
 variable "function_name" {
   description = "Name of the Lambda function"
   type        = string
