@@ -33,6 +33,9 @@ resource "random_password" "password" {
   length           = 16
   special          = true
   override_special = "_-"
+  keepers = {
+    rds_instance_id = aws_db_instance.postgres.id
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "db_password_version" {
@@ -69,5 +72,10 @@ resource "aws_db_instance" "postgres" {
   backup_retention_period = var.backup_retention_period
   vpc_security_group_ids  = [aws_security_group.rds_sg.id]
   db_subnet_group_name    = aws_db_subnet_group.rds_subnet_group.name
+
+  depends_on = [ 
+    aws_db_subnet_group.rds_subnet_group,
+    aws_secretsmanager_secret_version.db_password_version
+  ]
 }
 
