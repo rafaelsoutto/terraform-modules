@@ -24,7 +24,7 @@ resource "aws_ecs_service" "this" {
     ] : []
 
     content {
-      target_group_arn = aws_lb_target_group.this[load_balancer.key].arn
+      target_group_arn = var.lb_target_group_arn
       container_name   = load_balancer.value.container_name
       container_port   = load_balancer.value.container_port
     }

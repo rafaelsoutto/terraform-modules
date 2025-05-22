@@ -148,3 +148,8 @@ variable "assign_public_ip" {
   type        = bool
   default     = false
 }
+
+variable "lb_target_group_arn" {
+  description = "ARN of the load balancer target group"
+  type        = string
+}
