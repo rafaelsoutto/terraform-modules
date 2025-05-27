@@ -153,3 +153,50 @@ variable "lb_target_group_arn" {
   description = "ARN of the load balancer target group"
   type        = string
 }
+
+variable "cluster_name" {
+  description = "Name of the ECS cluster"
+  type        = string
+  default     = "my-ecs-cluster"
+}
+
+variable "min_capacity" {
+  description = "Minimum number of tasks for the ECS service"
+  type        = number
+  default     = 1
+}
+
+variable "max_capacity" {
+  description = "Maximum number of tasks for the ECS service"
+  type        = number
+  default     = 3
+}
+
+variable "enable_autoscaling" {
+  description = "Enable auto scaling for the ECS service"
+  type        = bool
+  default     = true
+}
+
+variable "target_cpu_value" {
+  description = "Target value for the ECS service auto scaling"
+  type        = number
+  default     = 80
+}
+variable "target_memory_value" {
+  description = "Target value for the ECS service auto scaling"
+  type        = number
+  default     = 80
+}
+
+variable "scale_in_cooldown" {
+  description = "Cooldown period after scaling in"
+  type        = number
+  default     = 60
+}
+
+variable "scale_out_cooldown" {
+  description = "Cooldown period after scaling out"
+  type        = number
+  default     = 60
+}

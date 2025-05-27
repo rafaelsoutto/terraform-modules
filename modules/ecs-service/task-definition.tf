@@ -34,4 +34,6 @@ resource "aws_ecs_task_definition" "this" {
       container_definitions,
     ]
   }
+
+  
 }
