@@ -63,6 +63,7 @@ resource "aws_db_instance" "postgres" {
   password                = aws_secretsmanager_secret_version.db_password_version.secret_string
   parameter_group_name    = var.parameter_group_name
   skip_final_snapshot     = false
+  identifier              = var.db_name
   final_snapshot_identifier = "${var.db_name}-final-snapshot"
   publicly_accessible     = var.publicly_accessible
   storage_encrypted       = var.storage_encrypted
