@@ -21,6 +21,12 @@ variable "launch_type" {
   default     = "EC2"
 }
 
+variable "security_groups" {
+  description = "List of security group IDs for the ECS service"
+  type        = list(string)
+  default     = []
+}
+
 variable "deployment_minimum_healthy_percent" {
   description = "Minimum healthy percent for ECS service deployment"
   type        = number
