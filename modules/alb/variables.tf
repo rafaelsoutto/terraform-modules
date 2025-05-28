@@ -26,12 +26,16 @@ variable "target_type" {
 }
 
 variable "listener_rules" {
-  description = "Map of listener rules with target group configs"
+  description = "Map of listener rules to create"
   type = map(object({
-    priority          = number
-    path_patterns     = list(string)
-    target_port       = number
-    health_check_path = string
+    priority           = number
+    health_check_path  = string
+    target_port        = number
+    path_patterns      = list(string)
+    additional_conditions = optional(list(object({
+      field  = string
+      values = list(string)
+    })), [])
   }))
 }
 
@@ -45,4 +49,10 @@ variable "certificate_arn" {
   type        = string
   description = "ARN of the SSL certificate for HTTPS listeners"
   default     = ""
+}
+
+variable "health_check_port" {
+  type        = number
+  description = "Port for health checks, defaults to target port if not specified"
+  default     = null
 }

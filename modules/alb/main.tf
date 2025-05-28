@@ -43,7 +43,7 @@ resource "aws_lb_target_group" "tg" {
   for_each = var.listener_rules
 
   name     = "${var.name_prefix}-${each.key}-tg"
-  port     = each.value.target_port
+  port     = var.health_check_port != null ? var.health_check_port : each.value.target_port
   protocol = "HTTP"
   vpc_id   = var.vpc_id
 
@@ -55,7 +55,7 @@ resource "aws_lb_target_group" "tg" {
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
-    matcher             = "200-399"
+    matcher             = "200-299"
   }
 
   tags = var.tags
@@ -76,7 +76,6 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# https listener
 resource "aws_lb_listener" "https" {
   count = var.certificate_arn != null ? 1 : 0
   load_balancer_arn = aws_lb.alb.arn
@@ -106,22 +105,18 @@ resource "aws_lb_listener_rule" "rules" {
     target_group_arn = aws_lb_target_group.tg[each.key].arn
   }
 
+  # Always include path_pattern from the listener_rules
+  condition {
+    path_pattern {
+      values = each.value.path_patterns
+    }
+  }
+
+  # Include additional conditions if they exist
   dynamic "condition" {
-    for_each = [
-      for cond in each.value.conditions : 
-      cond if contains(["path_pattern", "source_ip", "host_header"], cond.field)
-    ]
+    for_each = try(each.value.additional_conditions, [])
     
     content {
-      # Path pattern condition
-      dynamic "path_pattern" {
-        for_each = condition.value.field == "path_pattern" ? [1] : []
-        content {
-          values = condition.value.values
-        }
-      }
-      
-      # Source IP condition
       dynamic "source_ip" {
         for_each = condition.value.field == "source_ip" ? [1] : []
         content {
@@ -129,7 +124,6 @@ resource "aws_lb_listener_rule" "rules" {
         }
       }
       
-      # Host header condition
       dynamic "host_header" {
         for_each = condition.value.field == "host_header" ? [1] : []
         content {
@@ -151,20 +145,18 @@ resource "aws_lb_listener_rule" "https_rules" {
     target_group_arn = aws_lb_target_group.tg[each.key].arn
   }
 
+  # Always include path_pattern from the listener_rules
+  condition {
+    path_pattern {
+      values = each.value.path_patterns
+    }
+  }
+
+  # Include additional conditions if they exist
   dynamic "condition" {
-    for_each = [
-      for cond in each.value.conditions : 
-      cond if contains(["path_pattern", "source_ip", "host_header"], cond.field)
-    ]
+    for_each = try(each.value.additional_conditions, [])
     
     content {
-      dynamic "path_pattern" {
-        for_each = condition.value.field == "path_pattern" ? [1] : []
-        content {
-          values = condition.value.values
-        }
-      }
-      
       dynamic "source_ip" {
         for_each = condition.value.field == "source_ip" ? [1] : []
         content {
