@@ -39,3 +39,10 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
+
+variable "certificate_arn" {
+  type        = string
+  description = "ARN of the SSL certificate for HTTPS listeners"
+  default     = ""
+}
