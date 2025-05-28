@@ -111,6 +111,13 @@ variable "containers" {
     cpu         = number
     memory      = number
     essential   = bool
+    health_check = object({
+      command     = list(string)
+      interval    = number
+      timeout     = number
+      retries     = number
+      startPeriod = number
+    })
     port_mappings = list(object({
       container_port = number
       host_port      = number
@@ -123,6 +130,13 @@ variable "containers" {
     cpu         = 256
     memory      = 512
     essential   = true
+    health_check = {
+      command     = [ "CMD-SHELL", "curl -f http://localhost:8000/health || exit 1" ]
+      interval    = 30
+      timeout     = 5
+      retries     = 3
+      startPeriod = 10
+    }
     port_mappings = [
       {
         container_port = 80
