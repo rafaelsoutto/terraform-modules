@@ -54,7 +54,7 @@ resource "aws_lb_target_group" "tg" {
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
-    unhealthy_threshold = 2
+    unhealthy_threshold = 4
     matcher             = "200-299"
   }
 
@@ -142,7 +142,7 @@ resource "aws_lb_listener_rule" "https_rules" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.tg[each.key].arn
+    target_group_arn = var.target_group_arn != null ? var.target_group_arn : aws_lb_target_group.tg[each.key].arn
   }
 
   # Always include path_pattern from the listener_rules

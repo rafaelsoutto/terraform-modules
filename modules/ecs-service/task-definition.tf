@@ -40,7 +40,6 @@ container_definitions = jsonencode([
         "awslogs-create-group"   = "true"
         "mode"                   = "non-blocking"
         "max-buffer-size"       = "1m"
-        "tag"                    = "{{.Name}}/{{.ID}}"
       }
     }
     healthCheck = container.health_check != null ? {

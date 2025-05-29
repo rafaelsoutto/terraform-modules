@@ -56,3 +56,9 @@ variable "health_check_port" {
   description = "Port for health checks, defaults to target port if not specified"
   default     = null
 }
+
+variable "target_group_arn" {
+  type        = string
+  description = "ARN of the ALB listener to attach target groups to"
+  default     = ""
+}
