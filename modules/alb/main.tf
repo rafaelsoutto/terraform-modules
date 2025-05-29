@@ -130,6 +130,13 @@ resource "aws_lb_listener_rule" "rules" {
           values = condition.value.values
         }
       }
+      dynamic "http_header" {
+        for_each = condition.value.field == "http_header" ? [1] : []
+        content {
+          http_header_name = condition.value.http_header_name
+          values           = condition.value.values
+        }
+      }
     }
   }
 }
@@ -168,6 +175,13 @@ resource "aws_lb_listener_rule" "https_rules" {
         for_each = condition.value.field == "host_header" ? [1] : []
         content {
           values = condition.value.values
+        }
+      }
+      dynamic "http_header" {
+        for_each = condition.value.field == "http_header" ? [1] : []
+        content {
+          http_header_name = condition.value.http_header_name
+          values           = condition.value.values
         }
       }
     }

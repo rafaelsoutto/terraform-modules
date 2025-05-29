@@ -35,6 +35,7 @@ variable "listener_rules" {
     additional_conditions = optional(list(object({
       field  = string
       values = list(string)
+      http_header_name = optional(string)
     })), [])
   }))
 }
