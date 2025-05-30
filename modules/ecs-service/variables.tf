@@ -130,6 +130,9 @@ variable "containers" {
     cpu         = 256
     memory      = 512
     essential   = true
+    environment = {
+      MY_ENV_VAR = "my_value"
+    }
     health_check = {
       command     = [ "CMD-SHELL", "curl -f http://localhost:8000/health || exit 1" ]
       interval    = 30

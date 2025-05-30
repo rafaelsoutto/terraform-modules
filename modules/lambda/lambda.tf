@@ -54,3 +54,36 @@ resource "aws_lambda_event_source_mapping" "sqs_trigger" {
 
   depends_on = [aws_lambda_function.this]
 }
+
+resource "aws_cloudwatch_event_rule" "scheduled_event" {
+  count = var.scheduled_trigged && var.schedule_expression != null ? 1 : 0
+
+  name                = "${var.function_name}-scheduled-event"
+  description         = "Scheduled event for ${var.function_name}"
+  schedule_expression = var.schedule_expression
+
+  tags = {
+    Name = "${var.function_name}-scheduled-event"
+  }
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_events" {
+  count = var.scheduled_trigged && var.schedule_expression != null ? 1 : 0
+
+  statement_id  = "AllowExecutionFromCloudWatchEvents-${var.function_name}"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.this.arn
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.scheduled_event[0].arn
+
+  depends_on = [aws_lambda_function.this]
+}
+
+resource "aws_lambda_event_source_mapping" "scheduled_trigger" {
+  count = var.scheduled_trigged && var.schedule_expression != null ? 1 : 0
+
+  event_source_arn = aws_cloudwatch_event_rule.scheduled_event.arn
+  function_name    = aws_lambda_function.this.arn
+
+  depends_on = [aws_lambda_function.this]
+}

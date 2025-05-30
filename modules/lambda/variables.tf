@@ -69,6 +69,18 @@ variable "memory_size" {
   default     = 128
 }
 
+variable "scheduled_trigged" {
+  description = "Whether the Lambda should be triggered by a schedule"
+  type        = bool
+  default     = false
+}
+
+variable "schedule_expression" {
+  description = "Schedule expression for the Lambda trigger (e.g., rate(5 minutes))"
+  type        = string
+  default     = null
+}
+
 variable "vpc_config" {
   description = "VPC configuration for Lambda"
   type = object({
