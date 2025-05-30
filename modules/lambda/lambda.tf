@@ -74,7 +74,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_events" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.this.arn
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.scheduled_event[0].arn
+  source_arn    = aws_cloudwatch_event_rule.scheduled_event[count.index].arn
 
   depends_on = [aws_lambda_function.this]
 }
@@ -82,7 +82,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_events" {
 resource "aws_lambda_event_source_mapping" "scheduled_trigger" {
   count = var.scheduled_trigged && var.schedule_expression != null ? 1 : 0
 
-  event_source_arn = aws_cloudwatch_event_rule.scheduled_event.arn
+  event_source_arn = aws_cloudwatch_event_rule.scheduled_event[count.index].arn
   function_name    = aws_lambda_function.this.arn
 
   depends_on = [aws_lambda_function.this]
