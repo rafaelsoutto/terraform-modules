@@ -55,6 +55,7 @@ resource "aws_lambda_event_source_mapping" "sqs_trigger" {
   depends_on = [aws_lambda_function.this]
 }
 
+
 resource "aws_cloudwatch_event_rule" "scheduled_event" {
   count = var.scheduled_trigged && var.schedule_expression != null ? 1 : 0
 
@@ -79,11 +80,10 @@ resource "aws_lambda_permission" "allow_cloudwatch_events" {
   depends_on = [aws_lambda_function.this]
 }
 
-resource "aws_lambda_event_source_mapping" "scheduled_trigger" {
+resource "aws_cloudwatch_event_target" "lambda_target" {
   count = var.scheduled_trigged && var.schedule_expression != null ? 1 : 0
 
-  event_source_arn = aws_cloudwatch_event_rule.scheduled_event[count.index].arn
-  function_name    = aws_lambda_function.this.arn
-
-  depends_on = [aws_lambda_function.this]
+  rule      = aws_cloudwatch_event_rule.scheduled_event[count.index].name
+  target_id = "${var.function_name}-target"
+  arn       = aws_lambda_function.this.arn
 }
