@@ -16,7 +16,6 @@ resource "aws_ecs_task_definition" "this" {
   }
 
 
-
 container_definitions = jsonencode([
   for container in var.containers : {
     name        = container.name
