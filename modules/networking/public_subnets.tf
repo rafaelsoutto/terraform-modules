@@ -6,6 +6,8 @@ resource "aws_subnet" "custom_public" {
   map_public_ip_on_launch = var.map_public_ip_on_launch
   
   tags = {
-    Name = "${var.vpc_name}-public-sn-${count.index + 1}"
+    Name       = "${var.vpc_name}-public-sn-${count.index + 1}"
+    SubnetType = "public"
+    "tag:Name" = "${var.vpc_name}-public-sn-${count.index + 1}"
   }
 }

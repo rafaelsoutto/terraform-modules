@@ -7,7 +7,9 @@ resource "aws_subnet" "custom_private" {
   map_public_ip_on_launch = var.map_public_ip_on_launch
   
   tags = {
-    Name = "${var.vpc_name}-private-sn-${count.index + 1}"
+    Name       = "${var.vpc_name}-private-sn-${count.index + 1}"
+    SubnetType = "private"
+    "tag:Name" = "${var.vpc_name}-private-sn-${count.index + 1}"
   }
 }
 

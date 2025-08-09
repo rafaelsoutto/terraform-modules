@@ -7,6 +7,14 @@ resource "aws_route_table" "public" {
     gateway_id = "local"
   }
 
+  dynamic "route" {
+    for_each = var.assign_generated_ipv6_cidr_block ? [1] : []
+    content {
+      ipv6_cidr_block = aws_vpc.custom_vpc.ipv6_cidr_block
+      gateway_id      = "local"
+    }
+  }
+
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw.id
@@ -34,11 +42,18 @@ resource "aws_route_table" "private" {
     gateway_id = "local"
   }
 
+  dynamic "route" {
+    for_each = var.assign_generated_ipv6_cidr_block ? [1] : []
+    content {
+      ipv6_cidr_block = aws_vpc.custom_vpc.ipv6_cidr_block
+      gateway_id      = "local"
+    }
+  }
+
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_nat_gateway.custom_nat[0].id
   }
-
 
   tags = {
     Name = "${var.vpc_name}-private-rt"
