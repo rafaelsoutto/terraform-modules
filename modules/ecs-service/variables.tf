@@ -223,3 +223,9 @@ variable "scale_out_cooldown" {
   type        = number
   default     = 60
 }
+
+variable "enable_scheduled_scaling" {
+  description = "Enable scheduled scaling for the ECS service"
+  type        = bool
+  default     = false
+}
