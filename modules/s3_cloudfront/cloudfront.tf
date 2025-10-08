@@ -49,8 +49,8 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   restrictions {
     geo_restriction {
-      restriction_type = var.geo_restriction_enabled ? "whitelist" : "none"
-      locations        = var.geo_restriction_locations
+      restriction_type = var.geo_restriction_enabled ? var.geo_restriction_type : "none"
+      locations        = var.geo_restriction_enabled ? var.geo_restriction_locations : []
     }
   }
 
