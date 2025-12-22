@@ -3,14 +3,15 @@ variable "name_prefix" {
   description = "Prefix for naming resources"
 }
 
-variable "vpc_id" {
+variable "vpc_name" {
   type        = string
-  description = "VPC ID for the ALB and target groups"
+  description = "VPC name for the ALB and target groups"
 }
 
-variable "public_subnets" {
-  type        = list(string)
-  description = "List of public subnet IDs for the ALB"
+variable "internal" {
+  type        = bool
+  default     = false
+  description = "Whether the ALB is internal or internet-facing"
 }
 
 variable "ingress_cidrs" {
@@ -25,13 +26,19 @@ variable "target_type" {
   description = "Target type for the target groups"
 }
 
-variable "listener_rules" {
+variable "routing_rules" {
   description = "Map of listener rules to create"
   type = map(object({
-    priority           = number
-    health_check_path  = string
-    target_port        = number
-    path_patterns      = list(string)
+    target_group_port = number
+    target_group_protocol = string
+    health_check_path = string
+    health_check_port = number
+    target_group_target_type = string
+    listener_port  = number
+    listener_protocol = string
+    listener_certificate_arn = string
+    listener_rule_path_patterns = list(string)
+    listener_rule_priority = number
     additional_conditions = optional(list(object({
       field  = string
       values = list(string)
@@ -45,7 +52,6 @@ variable "tags" {
   default = {}
 }
 
-
 variable "certificate_arn" {
   type        = string
   description = "ARN of the SSL certificate for HTTPS listeners"
@@ -56,10 +62,4 @@ variable "health_check_port" {
   type        = number
   description = "Port for health checks, defaults to target port if not specified"
   default     = null
-}
-
-variable "target_group_arn" {
-  type        = string
-  description = "ARN of the ALB listener to attach target groups to"
-  default     = ""
 }

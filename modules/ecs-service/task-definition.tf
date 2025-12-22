@@ -1,8 +1,5 @@
-data "aws_region" "current" {}
-
-
 resource "aws_ecs_task_definition" "this" {
-  family                   = var.task_definition_family
+  family                   = "${var.service_name}-task-def"
   requires_compatibilities = var.requires_compatibilities
   network_mode             = var.network_mode
   cpu                      = var.cpu
@@ -33,8 +30,8 @@ container_definitions = jsonencode([
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        "awslogs-group"          = "${var.task_definition_family}-${container.name}-logs"
-        "awslogs-region"         = data.aws_region.current.name
+        "awslogs-group"          = "${var.service_name}-task-def-${container.name}-logs"
+        "awslogs-region"         = data.aws_region.current.id
         "awslogs-stream-prefix"  = container.name
         "awslogs-create-group"   = "true"
         "mode"                   = "non-blocking"
