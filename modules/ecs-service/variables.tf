@@ -197,6 +197,7 @@ variable "target_cpu_value" {
   type        = number
   default     = 80
 }
+
 variable "target_memory_value" {
   description = "Target value for the ECS service auto scaling"
   type        = number

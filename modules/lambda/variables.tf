@@ -81,13 +81,16 @@ variable "schedule_expression" {
   default     = null
 }
 
-variable "vpc_config" {
-  description = "VPC configuration for Lambda"
-  type = object({
-    subnet_ids         = list(string)
-    security_group_ids = list(string)
-  })
-  default = null
+variable "vpc_name" {
+  description = "VPC name for the Lambda function"
+  type        = string
+  default     = ""
+}
+
+variable "subnet_deployment_type" {
+  description = "Type of subnets for Lambda deployment (public or private)"
+  type        = string
+  default     = "private"
 }
 
 variable "additional_policy_statements" {
