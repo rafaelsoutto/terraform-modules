@@ -47,8 +47,19 @@ variable "geo_restriction_enabled" {
   default     = false
 }
 
+variable "geo_restriction_type" {
+  description = "The type of geo restriction (whitelist or blacklist). Only used when geo_restriction_enabled is true."
+  type        = string
+  default     = "whitelist"
+  
+  validation {
+    condition     = contains(["whitelist", "blacklist"], var.geo_restriction_type)
+    error_message = "geo_restriction_type must be either 'whitelist' or 'blacklist'."
+  }
+}
+
 variable "geo_restriction_locations" {
-  description = "List of locations for geo restriction."
+  description = "List of country codes for geo restriction (e.g., ['US', 'CA', 'GB']). Used with geo_restriction_type."
   type        = list(string)
   default     = []
 }
