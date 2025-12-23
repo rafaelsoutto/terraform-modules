@@ -39,20 +39,9 @@ variable "deployment_maximum_percent" {
   default     = 200
 }
 
-variable "vpc_id" {
-  description = "VPC ID where the ECS cluster will be created"
+variable "vpc_name" {
+  description = "VPC Name where the ECS cluster will be created"
   type        = string
-}
-
-variable "subnet_ids" {
-  description = "List of subnet IDs for the ECS cluster"
-  type        = list(string)
-}
-
-variable "task_definition_family" {
-  description = "Family name for the ECS task definition"
-  type        = string
-  default     = "my-task-family"
 }
 
 variable "requires_compatibilities" {
@@ -94,13 +83,11 @@ variable "cpu_architecture" {
 variable "allowed_actions" {
   description = "List of allowed actions for the ECS task definition"
   type        = list(string)
-  default     = ["*"]
 }
 
 variable "allowed_resources" {
   description = "List of allowed resources for the ECS task definition"
   type        = list(string)
-  default     = ["*"]
 }
 
 variable "containers" {
@@ -156,11 +143,6 @@ variable "is_loadbalancer_fronted" {
   default     = false
 }
 
-variable "vpc_cidr" {
-  description = "CIDR block of the VPC"
-  type        = string
-}
-
 variable "lb_sg_id" {
   description = "List of security group IDs for the ECS service"
   type        = string
@@ -172,9 +154,18 @@ variable "assign_public_ip" {
   default     = false
 }
 
-variable "lb_target_group_arn" {
-  description = "ARN of the load balancer target group"
-  type        = string
+variable "lb_target_groups" {
+  description = "Information about load balancer target groups, port, arn, protocol..."
+  type        = map(object({
+    target_group_arn  = string
+    target_group_name = string
+    target_port       = number
+    target_protocol   = string
+    target_type       = string
+    health_check_path = string
+    health_check_port = number
+  }))
+  default     = {}
 }
 
 variable "cluster_name" {
@@ -206,6 +197,7 @@ variable "target_cpu_value" {
   type        = number
   default     = 80
 }
+
 variable "target_memory_value" {
   description = "Target value for the ECS service auto scaling"
   type        = number
@@ -226,6 +218,12 @@ variable "scale_out_cooldown" {
 
 variable "enable_scheduled_scaling" {
   description = "Enable scheduled scaling for the ECS service"
+  type        = bool
+  default     = false
+}
+
+variable "private_deployment" {
+  description = "Whether the ECS service should be deployed in private subnets"
   type        = bool
   default     = false
 }
