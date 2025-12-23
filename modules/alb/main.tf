@@ -68,7 +68,7 @@ resource "aws_lb_listener" "alb_listeners" {
   port                = each.value.listener_port
   protocol            = each.value.listener_protocol
   ssl_policy          = each.value.listener_protocol == "HTTPS" ? "ELBSecurityPolicy-2016-08" : null
-  certificate_arn     = each.value.listener_protocol == "HTTPS" ? each.value.listerner_certificate_arn : null
+  certificate_arn     = each.value.listener_protocol == "HTTPS" ? each.value.listener_certificate_arn : null
 
   default_action {
     # 404 not found
