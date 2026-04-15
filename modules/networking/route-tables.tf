@@ -7,6 +7,14 @@ resource "aws_route_table" "public" {
     gateway_id = "local"
   }
 
+  dynamic "route" {
+    for_each = var.assign_generated_ipv6_cidr_block ? [1] : []
+    content {
+      ipv6_cidr_block = aws_vpc.custom_vpc.ipv6_cidr_block
+      gateway_id      = "local"
+    }
+  }
+
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw.id
