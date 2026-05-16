@@ -90,6 +90,24 @@ variable "flow_log_retention_days" {
   default     = 7
 }
 
+variable "enable_s3_endpoint" {
+  description = "Enable VPC Gateway endpoint for S3 (routes private subnet traffic to S3 without NAT)"
+  type        = bool
+  default     = false
+}
+
+variable "enable_secretsmanager_endpoint" {
+  description = "Enable VPC Interface endpoint for Secrets Manager"
+  type        = bool
+  default     = false
+}
+
+variable "enable_cloudwatch_endpoint" {
+  description = "Enable VPC Interface endpoints for CloudWatch (Logs, Metrics, Events)"
+  type        = bool
+  default     = false
+}
+
 variable "nat_connectivity_type" {
   description = "Connectivity type for NAT Gateway (public or private)"
   type        = string

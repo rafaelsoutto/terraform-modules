@@ -5,21 +5,26 @@ data "archive_file" "lambda_source" {
 }
 
 resource "aws_lambda_function" "this" {
-  filename      = "${path.module}/function.zip"
-  function_name = var.function_name
-  role          = aws_iam_role.lambda_exec.arn
-  handler       = var.handler
-  runtime       = var.runtime
-  timeout       = var.timeout
-  memory_size   = var.memory_size
-  layers        = var.lambda_layers
-
+  filename            = "${path.module}/function.zip"
+  function_name       = var.function_name
+  role                = aws_iam_role.lambda_exec.arn
+  handler             = var.handler
+  runtime             = var.runtime
+  timeout             = var.timeout
+  memory_size         = var.memory_size
+  layers              = var.lambda_layers
+  reserved_concurrent_executions = var.reserved_concurrent_executions
+  kms_key_arn         = var.kms_key_arn != null ? var.kms_key_arn : null
+  code_signing_config_arn = var.enable_code_signing && var.code_signing_config_arn != null ? var.code_signing_config_arn : null
+  tracing_config {
+    mode = var.enable_xray_tracing ? "Active" : "PassThrough"
+  }
 
   dynamic "vpc_config" {
-    for_each = var.vpc_config != null ? [var.vpc_config] : []
+    for_each = var.network != null ? [1] : []
     content {
-      subnet_ids         = vpc_config.value.subnet_ids
-      security_group_ids = vpc_config.value.security_group_ids
+      subnet_ids         = var.network.private_subnet_ids
+      security_group_ids = var.vpc_security_group_ids
     }
   }
 
@@ -29,6 +34,13 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = var.environment_variables
+  }
+
+  dynamic "dead_letter_config" {
+    for_each = var.enable_dead_letter_queue && var.dlq_arn != null ? [1] : []
+    content {
+      target_arn = var.dlq_arn
+    }
   }
 
   source_code_hash = filebase64sha256(data.archive_file.lambda_source.output_path)

@@ -3,12 +3,15 @@ resource "aws_security_group" "tailscale_sg" {
   description = "Security group for Tailscale VPN"
   vpc_id      = var.vpc_id
 
-  ingress {
-    description = "Allow SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = var.allowed_ssh_cidrs
+  dynamic "ingress" {
+    for_each = length(var.allowed_ssh_cidrs) > 0 ? [1] : []
+    content {
+      description = "Allow SSH from specified CIDRs"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = var.allowed_ssh_cidrs
+    }
   }
 
   ingress {
@@ -20,15 +23,31 @@ resource "aws_security_group" "tailscale_sg" {
   }
 
   ingress {
-    description = "Allow HTTPS for coordination server"
+    description = "Tailscale HTTPS control plane"
+    from_port   = var.https_port
+    to_port     = var.https_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Tailscale HTTP (for coordination)"
+    from_port   = var.http_port
+    to_port     = var.http_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow HTTPS for AWS services and Tailscale"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    description = "Allow HTTP for initial auth redirects"
+  egress {
+    description = "Allow HTTP for Tailscale coordination"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -36,10 +55,18 @@ resource "aws_security_group" "tailscale_sg" {
   }
 
   egress {
-    description = "Allow all outbound"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    description = "Allow DNS"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow Tailscale UDP"
+    from_port   = 41641
+    to_port     = 41641
+    protocol    = "udp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -56,10 +83,21 @@ resource "aws_instance" "tailscale" {
   associate_public_ip_address = var.associate_public_ip
   key_name                    = var.key_name
   user_data                   = var.user_data
+  iam_instance_profile        = var.iam_instance_profile_name
+  monitoring                  = var.enable_monitoring
+  ebs_optimized               = var.ebs_optimized
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
 
   root_block_device {
-    volume_size = var.root_volume_size
-    volume_type = var.root_volume_type
+    volume_size           = var.root_volume_size
+    volume_type           = var.root_volume_type
+    encrypted             = var.root_volume_encrypted
+    delete_on_termination = true
   }
 
   tags = merge(

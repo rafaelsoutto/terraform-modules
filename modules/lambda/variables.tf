@@ -81,13 +81,63 @@ variable "schedule_expression" {
   default     = null
 }
 
-variable "vpc_config" {
-  description = "VPC configuration for Lambda"
+variable "enable_xray_tracing" {
+  description = "Enable AWS X-Ray tracing for the Lambda function"
+  type        = bool
+  default     = true
+}
+
+variable "enable_dead_letter_queue" {
+  description = "Enable Dead Letter Queue for failed Lambda executions"
+  type        = bool
+  default     = true
+}
+
+variable "dlq_arn" {
+  description = "ARN of the SQS queue to use as DLQ. Required if enable_dead_letter_queue is true."
+  type        = string
+  default     = null
+}
+
+variable "kms_key_arn" {
+  description = "KMS key ARN for environment variable encryption. If null, AWS managed key is used."
+  type        = string
+  default     = null
+}
+
+variable "reserved_concurrent_executions" {
+  description = "Amount of concurrency available for this function. -1 (default) removes the limit."
+  type        = number
+  default     = -1
+}
+
+variable "enable_code_signing" {
+  description = "Enable code signing for the Lambda function"
+  type        = bool
+  default     = false
+}
+
+variable "code_signing_config_arn" {
+  description = "ARN of the code signing configuration. Required if enable_code_signing is true."
+  type        = string
+  default     = null
+}
+
+variable "network" {
+  description = "Network context from the networking module. When set, Lambda runs inside the VPC."
   type = object({
-    subnet_ids         = list(string)
-    security_group_ids = list(string)
+    vpc_id             = string
+    vpc_cidr           = string
+    public_subnet_ids  = list(string)
+    private_subnet_ids = list(string)
   })
   default = null
+}
+
+variable "vpc_security_group_ids" {
+  description = "Security group IDs for the Lambda VPC config. Required when network is set."
+  type        = list(string)
+  default     = []
 }
 
 variable "additional_policy_statements" {

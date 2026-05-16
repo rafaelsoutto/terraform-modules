@@ -1,8 +1,13 @@
+locals {
+  any_interface_endpoint  = var.enable_secretsmanager_endpoint || var.enable_cloudwatch_endpoint
+  effective_dns_hostnames = var.enable_dns_hostnames || local.any_interface_endpoint
+}
+
 resource "aws_vpc" "custom_vpc" {
   cidr_block         = var.vpc_cidr
   instance_tenancy   = var.instance_tenancy
   enable_dns_support = var.enable_dns_support
-  enable_dns_hostnames = var.enable_dns_hostnames
+  enable_dns_hostnames = local.effective_dns_hostnames
   enable_network_address_usage_metrics = var.enable_network_address_usage_metrics
   assign_generated_ipv6_cidr_block = var.assign_generated_ipv6_cidr_block
 

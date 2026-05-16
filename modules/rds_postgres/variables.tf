@@ -41,20 +41,31 @@ variable "publicly_accessible" {
 }
 
 variable "storage_encrypted" {
-  description = "Enable storage encryption?"
+  description = "Enable storage encryption at rest (KMS encryption)"
   type        = bool
-  default     = false
+  default     = true
 }
 
-variable "vpc_id" {
-  description = "The VPC ID where the RDS instance will be deployed"
+variable "kms_key_id" {
+  description = "KMS key ID for RDS encryption. If null, AWS managed key is used."
   type        = string
+  default     = null
+}
+
+variable "network" {
+  description = "Network context from the networking module"
+  type = object({
+    vpc_id             = string
+    vpc_cidr           = string
+    public_subnet_ids  = list(string)
+    private_subnet_ids = list(string)
+  })
 }
 
 variable "allowed_ips" {
-  description = "List of IPs allowed to connect to RDS (in CIDR format)"
+  description = "CIDRs allowed to connect to RDS. Defaults to VPC CIDR when empty."
   type        = list(string)
-  default     = ["0.0.0.0/0"]  # Default: Open to all (not recommended)
+  default     = []
 }
 
 variable "backup_retention_period" {
@@ -69,19 +80,68 @@ variable "deletion_protection" {
   default     = true
 }
 
-variable "subnet_ids" {
-  description = "List of subnet IDs where the RDS instance should be deployed"
-  type        = list(string)
-}
-
 variable "performance_insights_enabled" {
   description = "Enable performance insights for the RDS instance"
   type        = bool
-  default     = false
+  default     = true
+}
+
+variable "performance_insights_kms_key_id" {
+  description = "KMS key ID for Performance Insights encryption. If null, AWS managed key is used."
+  type        = string
+  default     = null
 }
 
 variable "monitoring_interval" {
-  description = "The interval (in seconds) for enhanced monitoring"
+  description = "The interval (in seconds) for enhanced monitoring. 0 to disable."
   type        = number
   default     = 60
+}
+
+variable "enable_iam_database_authentication" {
+  description = "Enable IAM database authentication"
+  type        = bool
+  default     = true
+}
+
+variable "multi_az" {
+  description = "Enable Multi-AZ for the RDS instance"
+  type        = bool
+  default     = true
+}
+
+variable "copy_tags_to_snapshot" {
+  description = "Copy tags to snapshots"
+  type        = bool
+  default     = true
+}
+
+variable "enable_cloudwatch_logs" {
+  description = "Enable exporting PostgreSQL logs to CloudWatch"
+  type        = bool
+  default     = true
+}
+
+variable "auto_minor_version_upgrade" {
+  description = "Enable automatic minor version upgrades"
+  type        = bool
+  default     = true
+}
+
+variable "secrets_kms_key_id" {
+  description = "KMS key ID for Secrets Manager encryption. If null, AWS managed key is used."
+  type        = string
+  default     = null
+}
+
+variable "enable_secret_rotation" {
+  description = "Enable automatic secret rotation"
+  type        = bool
+  default     = true
+}
+
+variable "secret_rotation_days" {
+  description = "Number of days between automatic secret rotations"
+  type        = number
+  default     = 30
 }
