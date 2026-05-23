@@ -14,59 +14,11 @@ resource "aws_security_group" "tailscale_sg" {
     }
   }
 
-  ingress {
-    description = "Tailscale UDP"
-    from_port   = 41641
-    to_port     = 41641
-    protocol    = "udp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "Tailscale HTTPS control plane"
-    from_port   = var.https_port
-    to_port     = var.https_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "Tailscale HTTP (for coordination)"
-    from_port   = var.http_port
-    to_port     = var.http_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
-    description = "Allow HTTPS for AWS services and Tailscale"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    description = "Allow HTTP for Tailscale coordination"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    description = "Allow DNS"
-    from_port   = 53
-    to_port     = 53
-    protocol    = "udp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    description = "Allow Tailscale UDP"
-    from_port   = 41641
-    to_port     = 41641
-    protocol    = "udp"
+    description = "Allow All Traffic for Tailscale"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 

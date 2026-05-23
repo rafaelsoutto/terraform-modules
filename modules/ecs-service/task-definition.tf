@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "this" {
         logDriver = "awslogs"
         options = {
           "awslogs-group"         = "${var.task_definition_family}-${container.name}-logs"
-          "awslogs-region"        = data.aws_region.current.name
+           "awslogs-region"        = data.aws_region.current.region
           "awslogs-stream-prefix" = container.name
           "awslogs-create-group"  = "true"
           "mode"                  = "non-blocking"

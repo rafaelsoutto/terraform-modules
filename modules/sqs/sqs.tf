@@ -25,13 +25,16 @@ resource "aws_sqs_queue" "this" {
   max_message_size            = var.max_message_size
   message_retention_seconds   = var.message_retention_seconds
   receive_wait_time_seconds   = var.receive_wait_time_seconds
-  visibility_timeout_seconds   = var.visibility_timeout
+  visibility_timeout_seconds  = var.visibility_timeout
 
   kms_master_key_id                 = var.enable_encryption ? (var.kms_master_key_id != null ? var.kms_master_key_id : "alias/aws/sqs") : null
   kms_data_key_reuse_period_seconds = var.enable_encryption ? var.kms_data_key_reuse_period_seconds : null
 
-  redrive_policy = var.enable_dlq ? jsonencode({
-    dead_letter_target_arn = aws_sqs_queue.dlq[0].arn
-    max_receive_count      = var.max_receive_count
-  }) : null
+  dynamic "redrive_policy" {
+    for_each = var.enable_dlq ? [1] : []
+    content {
+      dead_letter_target_arn = aws_sqs_queue.dlq[0].arn
+      max_receive_count      = var.max_receive_count
+    }
+  }
 }

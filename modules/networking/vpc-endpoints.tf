@@ -24,7 +24,7 @@ resource "aws_vpc_endpoint" "s3" {
   count = var.enable_s3_endpoint ? 1 : 0
 
   vpc_id            = aws_vpc.custom_vpc.id
-  service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
+  service_name      = "com.amazonaws.${data.aws_region.current.region}.s3"
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [aws_route_table.private.id]
 
@@ -37,7 +37,7 @@ resource "aws_vpc_endpoint" "secretsmanager" {
   count = var.enable_secretsmanager_endpoint ? 1 : 0
 
   vpc_id              = aws_vpc.custom_vpc.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.secretsmanager"
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.secretsmanager"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = aws_subnet.custom_private[*].id
   security_group_ids  = [aws_security_group.vpc_endpoints[0].id]
@@ -52,7 +52,7 @@ resource "aws_vpc_endpoint" "cloudwatch_logs" {
   count = var.enable_cloudwatch_endpoint ? 1 : 0
 
   vpc_id              = aws_vpc.custom_vpc.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.logs"
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.logs"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = aws_subnet.custom_private[*].id
   security_group_ids  = [aws_security_group.vpc_endpoints[0].id]
@@ -67,7 +67,7 @@ resource "aws_vpc_endpoint" "cloudwatch_monitoring" {
   count = var.enable_cloudwatch_endpoint ? 1 : 0
 
   vpc_id              = aws_vpc.custom_vpc.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.monitoring"
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.monitoring"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = aws_subnet.custom_private[*].id
   security_group_ids  = [aws_security_group.vpc_endpoints[0].id]
@@ -82,7 +82,7 @@ resource "aws_vpc_endpoint" "cloudwatch_events" {
   count = var.enable_cloudwatch_endpoint ? 1 : 0
 
   vpc_id              = aws_vpc.custom_vpc.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.events"
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.events"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = aws_subnet.custom_private[*].id
   security_group_ids  = [aws_security_group.vpc_endpoints[0].id]
